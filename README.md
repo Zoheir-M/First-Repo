@@ -19,6 +19,8 @@ Score Tracking: The game keeps track of your score and displays it when you lose
 
 Python 3.x
 time and random modules (these are standard Python libraries)
-Installation
+
+**Installation**
+
 Make sure you have Python 3.x installed on your computer.
 Download the script file geography_game.py.
