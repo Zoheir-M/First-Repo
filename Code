@@ -1,0 +1,7 @@
+import random
+import time
+x = random.randint(1,100)
+if x > 50 print("Maybe the number is above 50?")
+if x < 50 print("Maybe the number is below 50")
+time.sleep(10)
+print(x)
