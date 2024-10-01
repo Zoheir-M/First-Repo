@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alatsi&display=swap" rel="stylesheet"> <!-- Alatsi font -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #2c3e50; /* Dark blue background */
+            font-family: 'Alatsi', sans-serif; /* Alatsi font */
+            color: #ecf0f1; /* Light text color */
+            position: relative;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #34495e; /* Dark gray for cells */
+            border: 2px solid #ecf0f1; /* Light border color */
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border-radius: 15px; /* Rounded edges */
+        }
+        .cell:hover {
+            background-color: #4a657a; /* Lighter gray on hover */
+            transform: scale(1.05);
+        }
+        .cell.clicked {
+            transition: transform 0.2s;
+            transform: scale(1.1);
+        }
+        .winner {
+            color: #2ecc71; /* Green color for winner text */
+        }
+        #reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #2980b9; /* Blue background */
+            color: #ecf0f1; /* Light text color */
+            border: none;
+            border-radius: 5px; /* Rounded edges for button */
+            transition: background-color 0.3s;
+        }
+        #reset:hover {
+            background-color: #3498db; /* Lighter blue on hover */
+        }
+        /* Stars background */
+        .star {
+            position: absolute;
+            background-color: #f1c40f;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tic Tac Toe</h1>
+<div id="board"></div>
+<button id="reset">Reset</button>
+<div id="status"></div>
+
+<script>
+    const board = document.getElementById('board');
+    const resetButton = document.getElementById('reset');
+    const statusDiv = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameState = ['', '', '', '', '', '', '', '', ''];
+    let isGameActive = true;
+
+    const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+
+    const checkWinner = () => {
+        for (let i = 0; i < winningConditions.length; i++) {
+            const [a, b, c] = winningConditions[i];
+            if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+                return gameState[a];
+            }
+        }
+        return null;
+    };
+
+    const handleCellClick = (index) => {
+        if (gameState[index] || !isGameActive) return;
+
+        gameState[index] = currentPlayer;
+        renderBoard();
+
+        // Add animation to the clicked cell
+        const cellDiv = board.children[index];
+        cellDiv.classList.add('clicked');
+
+        const winner = checkWinner();
+        if (winner) {
+            isGameActive = false;
+            statusDiv.innerText = `${winner} is the winner!`;
+            statusDiv.classList.add('winner');
+        } else if (!gameState.includes('')) {
+            statusDiv.innerText = 'It\'s a draw!';
+        } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            updateStatus();
+        }
+    };
+
+    const updateStatus = () => {
+        statusDiv.innerText = `It's ${currentPlayer}'s turn`;
+    };
+
+    const renderBoard = () => {
+        board.innerHTML = '';
+        gameState.forEach((cell, index) => {
+            const cellDiv = document.createElement('div');
+            cellDiv.classList.add('cell');
+            cellDiv.innerText = cell;
+            cellDiv.addEventListener('click', () => handleCellClick(index));
+            board.appendChild(cellDiv);
+        });
+        updateStatus();
+    };
+
+    const resetGame = () => {
+        gameState = ['', '', '', '', '', '', '', '', ''];
+        isGameActive = true;
+        currentPlayer = 'X';
+        statusDiv.innerText = '';
+        statusDiv.classList.remove('winner');
+        renderBoard();
+    };
+
+    const createStars = () => {
+        const numberOfStars = 100;
+        for (let i = 0; i < numberOfStars; i++) {
+            const star = document.createElement('div');
+            const size = Math.random() * 4 + 2; // Random size between 2px and 6px
+            star.classList.add('star');
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.top = `${Math.random() * 100}vh`;
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.animationDelay = `${Math.random() * 2}s`; // Random delay for twinkling
+            document.body.appendChild(star);
+        }
+    };
+
+    resetButton.addEventListener('click', resetGame);
+    renderBoard();
+    createStars(); // Create stars on page load
+</script>
+
+</body>
+</html>
